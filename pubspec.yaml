@@ -21,6 +21,11 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+<<<<<<< main
+=======
+  go_router: ^14.6.1
+  image_picker: ^1.1.2
+>>>>>>> local
 
 dev_dependencies:
 
