@@ -1,27 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'screens/home_screen.dart';
+import 'screens/create_visitor.dart';
+import 'screens/visitor_list.dart';
+import 'screens/edit_visitor.dart';
 
-import 'src/app.dart';
-import 'src/settings/settings_controller.dart';
-import 'src/settings/settings_service.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
-void main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+void main() {
+  final GoRouter router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/create',
+        builder: (context, state) => const CreateVisitorScreen(),
+      ),
+      GoRoute(
+        path: '/list',
+        builder: (context, state) => const VisitorListScreen(),
+      ),
+      GoRoute(
+        path: '/edit/:id',
+        builder: (context, state) {
+          // Acceso actualizado a los parámetros de la ruta
+          final visitorId = state.pathParameters['id']!;
+          return EditVisitorScreen(visitorId: visitorId);
+        },
+      ),
+    ],
   );
 
-  // Set up the SettingsController, which will glue user settings to multiple
-  // Flutter Widgets.
-  final settingsController = SettingsController(SettingsService());
+  runApp(MyApp(router: router));
+}
 
-  // Load the user's preferred theme while the splash screen is displayed.
-  // This prevents a sudden theme change when the app is first displayed.
-  await settingsController.loadSettings();
+class MyApp extends StatelessWidget {
+  final GoRouter router;
 
-  // Run the app and pass in the SettingsController. The app listens to the
-  // SettingsController for changes, then passes it further down to the
-  // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+  const MyApp({Key? key, required this.router}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: router,
+      title: 'CRUD UI',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+    );
+  }
 }
